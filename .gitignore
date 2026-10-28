@@ -1,0 +1,26 @@
+# Paramétrage local — contient des noms, jamais de secret, mais reste hors dépôt
+equipe.json
+*.local.json
+
+# Dossier de travail généré (documents réels, souvent sensibles)
+/a-valider/
+/livres/
+/archives/
+/cerveau/
+/logs/
+/crons-a-creer.sh
+
+# Sauvegardes créées par --force
+*.bak-*
+*.bak
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

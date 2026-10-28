@@ -1,0 +1,61 @@
+{
+  "_commentaire": [
+    "Squelette de paramétrage. Copier en equipe.json, remplir, puis :",
+    "  python3 scripts/installer.py --config equipe.json --dry-run",
+    "Un bloc absent prend son défaut. Aucun secret ici, jamais."
+  ],
+  "version": 1,
+  "prefixe": "equipe",
+  "profil": "default",
+  "racine": "~/equipe",
+
+  "langue": {
+    "code": "fr",
+    "tutoiement": true
+  },
+
+  "entrepreneur": {
+    "nom": "Prénom"
+  },
+
+  "entreprise": {
+    "nom": "Nom commercial",
+    "statut": "micro-entreprise",
+    "tva": "franchise",
+    "activite": "en une phrase : ce qui se vend réellement"
+  },
+
+  "postes": {
+    "bureau": {
+      "nom": "Bureau",
+      "ne_fait_jamais": ["publier", "prospecter"]
+    },
+    "voix": {
+      "nom": "Voix",
+      "ne_fait_jamais": ["envoyer un email", "signer un document"]
+    },
+    "troisieme": {
+      "nom": "Troisième",
+      "libelle": "Acquisition",
+      "ne_fait_jamais": ["négocier un prix", "engager l'entreprise"]
+    }
+  },
+
+  "verrou": {
+    "niveau3_actif": true,
+    "rappel": ["08:00", "18:00"],
+    "fuseau": "Europe/Paris"
+  },
+
+  "crons": {
+    "verrou": { "actif": true },
+    "urssaf": { "actif": false, "jour": "26" },
+    "france_travail": { "actif": false, "jour": "2" },
+    "livraison": "origin"
+  },
+
+  "kanban": {
+    "actif": false,
+    "assignee": "default"
+  }
+}

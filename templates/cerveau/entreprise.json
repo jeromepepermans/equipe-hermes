@@ -1,0 +1,33 @@
+{
+  "_lisez_moi": [
+    "Identité de facturation. Chaque valeur porte sa source.",
+    "Aucune donnée d'état civil inutile à la facturation (naissance, nationalité).",
+    "Aucun IBAN, aucune clé, aucun mot de passe ici."
+  ],
+  "entreprise": {
+    "nom_commercial": "{{ENTREPRISE}}",
+    "statut": "{{STATUT}}",
+    "tva": "{{TVA_MODE}}",
+    "activite": "{{ACTIVITE}}"
+  },
+  "identite_legale": {
+    "raison_sociale": "à confirmer",
+    "numero_immatriculation": "à confirmer",
+    "source": "à renseigner (Kbis, avis SIRENE)"
+  },
+  "coordonnees": {
+    "adresse": "à confirmer",
+    "code_postal": "",
+    "ville": "",
+    "email": "",
+    "telephone": "",
+    "source": "à renseigner"
+  },
+  "mentions_obligatoires": {
+    "facture": [],
+    "source": "à faire valider par un professionnel"
+  },
+  "devise": "EUR",
+  "regime": "{{STATUT}}",
+  "cree_le": "{{DATE}}"
+}
