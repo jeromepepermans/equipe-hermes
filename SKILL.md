@@ -1,84 +1,114 @@
 ---
 name: equipe-hermes
-description: "Installer CEO + 3 chefs sur une autre instance Hermes."
-version: 1.0.0
+description: "Construire et installer une équipe d'agents sur mesure."
+version: 2.0.0
 author: Jérôme PEPERMANS
 license: MIT
 platforms: [linux, macos]
 metadata:
   hermes:
-    tags: [equipe, agents, parametrage, installation, verrou, portabilite]
-    related_skills: [equipe-entrepreneur, equipes-delegation, hermes-agent]
+    tags: [equipe, agents, entretien, diagnostic, installation, verrou]
+    related_skills: [equipes-delegation, hermes-agent]
 ---
 
-# Équipe Hermes — installer le dispositif sur une autre instance
+# Équipe sur mesure — de l'inventaire à l'installation
 
 ## Quand l'utiliser
 
-- Un dispositif « CEO + 3 chefs » existe déjà quelque part et on veut le
-  **reproduire sur une autre instance Hermes** (autre machine, autre profil,
-  autre client).
-- Un entrepreneur a validé son équipe (`equipe-entrepreneur`, lots 1 à 3) et il
-  faut maintenant **la poser réellement** : dossiers, skills, rappels, kanban.
-- On reprend une instance existante et on veut **vérifier** que le dispositif y
-  est complet (les quatre skills, le dossier de travail, le verrou, les crons).
+- Une personne veut « des agents » et ne sait pas quoi leur confier.
+- Elle a déjà une équipe, et il faut la compléter, la refaire ou la porter ailleurs.
+- Il faut **installer** une équipe décidée : dossiers, skills, verrou, rappels.
 
-Ne couvre **pas** l'entretien qui décide *qui* fait *quoi* : c'est
-`equipe-entrepreneur`. Ici, la décision est déjà prise, on l'installe.
+Le skill va de l'inventaire à l'installation. Il ne part d'aucun modèle d'équipe :
+**le nombre de postes est un résultat**, pas une entrée.
 
-## Ce que le dispositif est — et n'est pas
+## Le principe
 
-**Un profil, quatre skills, un dossier, un verrou.** Pas un agent par poste.
+> **Un poste existe si, et seulement si, il porte une tâche récurrente qui a un
+> livrable nommé.**
 
-| Élément | Rôle |
+Aucun plafond. Un dispositif à 1 poste est légitime ; un à 6 aussi. Ce qui tue un
+dispositif, ce n'est pas le nombre, c'est le poste sans livrable — celui qu'on ne
+charge jamais et qui donne à la personne l'impression que l'équipe ne sert à rien.
+
+Trois mots du principe sont opposables :
+
+| Mot | Ce qu'il élimine |
 |---|---|
-| **CEO** (`<prefixe>-ceo`) | point d'entrée unique, découpe et dispatche |
-| **3 chefs** (`<prefixe>-bureau`, `-voix`, `-<3e>`) | un périmètre chacun, jamais deux sur un livrable |
-| **Dossier de travail** | `a-valider/` → `livres/` → `archives/` + `cerveau/` |
-| **Verrou** | 🟢 libre / 🟡 validation / 🔴 signature |
-| **Rappels** | un cron silencieux qui liste `a-valider/` |
+| **récurrente** (≥ 1×/mois) | les tâches annuelles, qui sont des notes d'agenda |
+| **que personne ne fait** | les doublons d'un profil, d'un outil ou d'un prestataire existant |
+| **livrable nommé** | « suivre la stratégie », « être présent », « réfléchir » |
 
-Les chefs ne sont **pas** des profils Hermes. Décision mesurée sur une
-installation réelle : trois profils dédiés ont été créés puis supprimés le même
-jour — trois mémoires et trois dossiers de skills à tenir pour des postes qui
-n'ont aucun outil propre. Un chef = **un skill chargé dans la session en cours**.
+## Le parcours — six étapes
 
-Conséquence non évidente, et c'est le piège n°1 : sur le kanban, l'`assignee`
-doit être un profil qui **existe** (`hermes kanban assignees`). Un assignee
-inconnu laisse la carte en `ready` indéfiniment. Le nom du chef va donc dans le
-**titre** : `[Léa] canevas d'atelier`, assignee `default`.
+| # | Étape | Sortie | Document |
+|---|---|---|---|
+| 1 | **Inventaire** — ce qui existe déjà | constat en trois lignes | `references/01-inventaire.md` |
+| 2 | **Entretien** — qui est la personne, statut, activités, papiers | réponses + documents | `references/02-entretien.md` |
+| 3 | **Documents** — extraire des faits sourcés | `cerveau/`, `questions-ouvertes.md` | `references/03-documents.md` |
+| 4 | **Diagnostic** — des besoins aux postes | liste justifiée | `references/04-diagnostic.md` |
+| 5 | **Récapitulatif validé** | `organigramme.md` + validation | `references/05-organigramme.md` |
+| 6 | **Installation** | dossiers, skills, verrou, rappels | `references/06-installation.md` |
 
-## Procédure — quatre étapes
+**L'étape 1 se refait à chaque entretien.** Trois mois plus tard, un profil est
+apparu, une prestataire a été recrutée, un poste a fusionné. Un diagnostic posé
+sur un inventaire périmé produit des doublons — l'erreur la plus coûteuse, parce
+qu'elle est invisible : le poste existe, personne ne l'appelle.
 
-1. **Auditer la cible** — `references/02-installation.md`, § « avant d'écrire ».
-   Version d'Hermes, profil actif, `HERMES_HOME` réel, cron qui tourne, kanban
-   qui répond. On ne paramètre pas une instance dont on ne connaît pas les
-   chemins.
-2. **Paramétrer** — `references/01-parametrage.md`. Sept blocs de questions,
-   puis un fichier `equipe.json`. Ce fichier est la seule entrée de
-   l'installateur : ce qui n'y est pas ne sera pas installé.
-3. **Installer** — `scripts/installer.py --config equipe.json`. Idempotent,
-   `--dry-run` disponible, sauvegarde avant écrasement.
-4. **Vérifier** — `references/02-installation.md`, § « recette ». Quatre skills
-   visibles, dossier complet, rappel muet quand `a-valider/` est vide, une
-   mission 🟡 qui s'arrête bien dans `a-valider/`.
+## Ce que l'entretien doit savoir
 
-## Les quatre skills générés
+1. **Qui** — rôle exact (entrepreneur, indépendant, dirigeant, salarié,
+   association), forme juridique, activités multiples éventuelles.
+2. **Ce qui se vend vraiment** — pas ce que le Kbis déclare.
+3. **L'argent** — ordres de grandeur seulement, jamais un montant de mémoire.
+4. **Le temps** — cinq tâches, ce qui est détesté, ce qui n'est jamais fait,
+   « deux heures par semaine, tu donnerais quoi ? ».
+5. **Les outils et les accès** — la liste, jamais un mot de passe.
+6. **Les papiers** — Kbis, SIRENE, récapitulatifs de déclaration, factures,
+   exports de caisse. Chaque fait entre avec **sa source**.
 
-| Skill | Contenu | Ne fait jamais |
-|---|---|---|
-| `<prefixe>-ceo` | dispatch, verrou, format de mission, kanban | produire un livrable lui-même |
-| `<prefixe>-bureau` | devis, factures, relances, déclarations, CA | publier, prospecter |
-| `<prefixe>-voix` | contenu, annonces, fiches, réseaux, SEO | envoyer, signer |
-| `<prefixe>-<3e>` | clients, fournisseurs, partenaires **ou** fidélisation | négocier un prix, engager |
+Le rôle n'est pas décoratif : il décide de ce qui est engageant, donc du niveau
+🔴. Un salarié qui n'engage pas l'entreprise et un dirigeant de société n'ont pas
+le même verrou.
 
-Le troisième poste est le seul dont le **libellé** change selon l'activité
-(`Acquisition`, `Partenaires`, `Fidélisation`) ; son **nom** se choisit avec
-l'entrepreneur. Bureau et Voix ne changent jamais : ce sont les deux manques de
-temps qui existent dans tous les métiers.
+## Le récapitulatif est un verrou technique
 
-Gabarits : `templates/skills/ceo.SKILL.md`, `templates/skills/chef.SKILL.md`.
-Règles de rédaction et de dispatch : `references/03-postes.md`.
+```bash
+python3 scripts/installer.py --config equipe.json --recapitulatif   # montrer
+python3 scripts/installer.py --config equipe.json --valider "<nom>" # approuver
+python3 scripts/installer.py --config equipe.json                   # installer
+```
+
+L'installateur **refuse** de tourner si l'organigramme n'est pas validé : code de
+sortie 3, aucune écriture. Il refuse aussi si le nombre de postes a changé depuis
+la validation — une validation qui ne correspond plus au contenu ne vaut rien.
+`--force` ne lève pas ce verrou ; seul `--valider` le fait.
+
+Le récapitulatif contient toujours : ce qui existait déjà, les N postes avec leur
+**justification**, ce qui n'est pas couvert, et **ce qui a été écarté avec la
+raison**.
+
+## Ce que l'installation crée
+
+```
+<racine>/
+├── organigramme.md        le récapitulatif validé (dérivé)
+├── a-valider/ livres/ archives/
+├── cerveau/               entreprise.json, offres.md, fiscal.md
+├── README.md  config.json  crons-a-creer.sh
+└── modeles/  logs/
+
+<HERMES_HOME>/skills/<prefixe>/
+├── <prefixe>-direction/   dispatch, verrou, format de mission
+└── <prefixe>-<slug>/      un par poste, autant que le diagnostic en a trouvé
+
+<HERMES_HOME>/scripts/<prefixe>-a-valider.sh
+```
+
+Huit modèles de postes servent de **points de départ** (`bureau`, `voix`,
+`acquisition`, `partenaires`, `fidelisation`, `production`, `logistique`, `sav`),
+ou `libre` pour un poste entièrement décrit par l'utilisateur. Choisir un modèle
+ne justifie pas le poste : la phrase « pourquoi il existe » reste obligatoire.
 
 ## Le verrou — non négociable
 
@@ -86,57 +116,43 @@ Règles de rédaction et de dispatch : `references/03-postes.md`.
 - 🟡 **validation avant sortie** : email, publication, annonce, message client.
   Le livrable est écrit dans `a-valider/` et l'agent **s'arrête**.
 - 🔴 **signature explicite** : facture, devis engageant, paiement, déclaration.
-  Le livrable reste dans `a-valider/`, l'agent rappelle la conséquence exacte
-  (numéro consommé, engagement, échéance légale).
+  Le livrable reste dans `a-valider/`, l'agent rappelle la conséquence exacte.
 
 **Aucun agent ne déplace un fichier de `a-valider/` vers `livres/`.** Le
-déplacement est la signature de l'entrepreneur — c'est aussi la seule preuve
-technique qu'une validation a eu lieu. Détail et cas limites :
-`references/04-verrou.md`.
+déplacement est la signature, et la seule preuve technique qu'une validation a eu
+lieu. Détail : `references/07-verrou.md`.
 
-Si l'activité n'a aucune obligation engageante, 🔴 est **déclaré et laissé
-vide** : il n'est jamais supprimé. Une facture au premier client professionnel
-arrive vite.
+## Portabilité
 
-## Rappels automatiques
-
-`references/05-crons.md`. Deux règles apprises sur une instance réelle :
-
-1. **Sortie vide = silence.** Un rappel qui notifie « rien à valider » finit
-   ignoré en trois jours.
-2. **`--no-agent`.** Un rappel est un `ls` formaté, pas un tour de LLM : zéro
-   coût, zéro latence, zéro risque d'invention.
-
-L'installateur écrit le script de rappel et la commande exacte ; la création du
-cron reste une décision explicite (`--with-crons` ou commande affichée).
+Une équipe finalisée voyage sous forme de **paramétrage + skills régénérés**,
+jamais d'un `rsync` : le cerveau, `livres/` et `questions-ouvertes.md` restent
+chez la personne. Détail : `references/09-portabilite.md`.
 
 ## Règles transverses
 
-1. **Langue et ton de l'entrepreneur**, fixés au paramétrage (tutoiement ou
-   vouvoiement). Ils s'appliquent aux quatre fiches, pas seulement au CEO.
+1. **Langue et ton de la personne**, fixés à l'entretien, appliqués partout.
 2. **Zéro invention** : un chiffre, un taux, une date non vérifié se marque
    « à confirmer ».
-3. **Aucun secret, aucune donnée personnelle** dans le dossier du dispositif ni
-   dans ce dépôt : pas de mot de passe, de clé, d'IBAN, de coordonnée client.
-   Les exemples de `references/07-exemple.md` sont **fictifs**.
-4. **Ne jamais garantir la conformité** juridique ou fiscale : « à faire
-   valider par un professionnel ».
-5. **Ne pas rouvrir** la question « un profil par chef ». Elle a été tranchée
-   par la mesure, pas par le goût.
+3. **Aucun secret, aucune donnée personnelle** dans le dispositif : pas de mot de
+   passe, de clé, d'IBAN, de coordonnée client. `questions-ouvertes.md` ne quitte
+   jamais la machine.
+4. **Les exemples du dépôt sont fictifs** — jamais un cas réel, même anonymisé.
+5. **Ne jamais garantir la conformité** juridique ou fiscale.
+6. **Le rôle décide du verrou**, pas le ton du message.
 
 ## Pièges
 
-- **Écrire les skills avant d'avoir le `equipe.json`.** On produit alors quatre
-  fiches à réécrire, avec des noms de postes qui changent en cours de route.
-- **Créer un profil Hermes par chef.** Voir plus haut : trois mémoires à tenir
-  pour rien, et des cartes kanban orphelines.
-- **Confondre « l'agent a fini » et « c'est validé ».** Tant que le fichier est
-  dans `a-valider/`, la mission n'est pas terminée.
-- **Laisser un rappel bavard.** Le verrou meurt de bruit, pas d'oubli.
-- **Recopier un vrai dossier client en exemple.** Le dépôt est public : les
-  exemples sont inventés, et le restent.
-- **Écraser un dispositif existant.** `installer.py` sauvegarde avant
-  d'écraser ; ne jamais contourner avec un `--force` réflexe.
+- **Sauter l'inventaire.** Le doublon est l'erreur la plus coûteuse et la plus
+  discrète.
+- **Partir du gabarit « Bureau / Voix / Acquisition ».** C'est un modèle, pas un
+  diagnostic.
+- **Compter les tâches.** Cinq tâches ne font pas cinq postes.
+- **Créer un poste « Direction ».** La direction est le skill de dispatch ; elle
+  ne produit aucun livrable.
+- **Installer sans récapitulatif validé.** L'installateur le refuse — ne pas
+  contourner en éditant `validation.valide` à la main : c'est le seul endroit du
+  dispositif où la personne est vraiment consultée.
+- **Confondre « l'agent a fini » et « c'est validé ».**
 
 ## Installation de ce skill
 
@@ -145,5 +161,4 @@ git clone https://github.com/jeromepepermans/equipe-hermes
 cp -r equipe-hermes ~/.hermes/skills/equipe-hermes
 ```
 
-Puis, dans une session : « charge `equipe-hermes` et installe le dispositif —
-voici `equipe.json` ».
+Puis, dans une session : « charge `equipe-hermes`, commence par l'inventaire ».
