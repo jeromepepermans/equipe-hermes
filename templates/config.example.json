@@ -1,21 +1,27 @@
 {
   "_commentaire": [
-    "Squelette de paramétrage. Copier en equipe.json, remplir, puis :",
-    "  python3 scripts/installer.py --config equipe.json --dry-run",
-    "Un bloc absent prend son défaut. Aucun secret ici, jamais."
+    "Squelette d'organigramme. Copier en equipe.json, remplir, puis :",
+    "  1. python3 scripts/installer.py --config equipe.json --recapitulatif",
+    "  2. python3 scripts/installer.py --config equipe.json --valider \"<nom>\"",
+    "  3. python3 scripts/installer.py --config equipe.json",
+    "La liste « postes » a la taille que le diagnostic a donnée : 1, 2, 4, 6…",
+    "Il n'y a pas de nombre imposé. Un poste sans livrable est refusé.",
+    "Aucun secret ici, jamais."
   ],
-  "version": 1,
+  "version": 2,
   "prefixe": "equipe",
   "profil": "default",
   "racine": "~/equipe",
 
   "langue": {
     "code": "fr",
-    "tutoiement": true
+    "tutoiement": true,
+    "ton": "direct et concret"
   },
 
-  "entrepreneur": {
-    "nom": "Prénom"
+  "utilisateur": {
+    "nom": "Prénom",
+    "role": "entrepreneur | indépendant | salarié | dirigeant de société | association"
   },
 
   "entreprise": {
@@ -25,24 +31,40 @@
     "activite": "en une phrase : ce qui se vend réellement"
   },
 
-  "postes": {
-    "bureau": {
-      "nom": "Bureau",
-      "ne_fait_jamais": ["publier", "prospecter"]
-    },
-    "voix": {
-      "nom": "Voix",
-      "ne_fait_jamais": ["envoyer un email", "signer un document"]
-    },
-    "troisieme": {
-      "nom": "Troisième",
-      "libelle": "Acquisition",
-      "ne_fait_jamais": ["négocier un prix", "engager l'entreprise"]
-    }
+  "inventaire": {
+    "date": "AAAA-MM-JJ",
+    "profils_hermes": [],
+    "personnes": [{ "nom": "Prénom", "role": "ce qu'elle fait déjà" }],
+    "outils": ["boutique en ligne", "logiciel de compta"],
+    "deja_couvert": ["ce qui est déjà fait par quelqu'un ou quelque chose"],
+    "constat": "ce que l'inventaire a appris, en une phrase"
   },
 
+  "postes": [
+    {
+      "nom": "Jeanne",
+      "libelle": "Bureau",
+      "modele": "bureau",
+      "pourquoi": "les factures partent en retard et les relances ne sont jamais faites"
+    },
+    {
+      "nom": "Léa",
+      "libelle": "Voix",
+      "modele": "voix",
+      "pourquoi": "les fiches produit sont vides et la newsletter n'existe pas"
+    }
+  ],
+
+  "hors_perimetre": [
+    "le cœur de métier : fabriquer, réparer, conseiller",
+    "la décision : prix, client, partenariat"
+  ],
+
+  "ecarte": [
+    { "sujet": "un poste Logistique", "raison": "3 expéditions par mois, la tâche n'est pas récurrente" }
+  ],
+
   "verrou": {
-    "niveau3_actif": true,
     "rappel": ["08:00", "18:00"],
     "fuseau": "Europe/Paris"
   },
@@ -57,5 +79,12 @@
   "kanban": {
     "actif": false,
     "assignee": "default"
+  },
+
+  "validation": {
+    "valide": false,
+    "par": null,
+    "le": null,
+    "postes_valides": null
   }
 }

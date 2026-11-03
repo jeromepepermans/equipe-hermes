@@ -1,27 +1,41 @@
 # equipe-hermes
 
-Un skill Hermes qui **installe et paramètre** un dispositif de travail
-« CEO + 3 chefs » sur n'importe quelle instance Hermes : quatre skills, un
-dossier de travail, un verrou de validation, des rappels silencieux.
+Un skill Hermes qui **construit une équipe d'agents sur mesure** — inventaire,
+entretien, diagnostic, organigramme validé — puis l'**installe** sur une instance
+Hermes : dossier de travail, skills des postes, verrou de validation, rappels
+silencieux.
 
-C'est la partie **exécution** d'une idée qui existe déjà en deux morceaux :
+Le nombre de postes n'est pas fixé : il est **la conséquence** de ce que la
+personne fait, de ce qui lui prend son temps, et de ce qui existe déjà chez elle.
+Un utilisateur qui a déjà deux agents n'a pas besoin des mêmes postes que
+quelqu'un qui part de zéro.
 
-| Dépôt | Ce qu'il fait | Quand |
+> Ce dépôt remplace et absorbe `equipe-entrepreneur` (privé) : l'entretien, le
+> diagnostic et l'installation sont désormais dans un seul skill, pour qu'il n'y
+> ait plus de trou entre « on décide l'équipe » et « on l'installe ».
+
+## Le parcours
+
+| # | Étape | Ce qui sort |
 |---|---|---|
-| [`equipe-entrepreneur`](https://github.com/jeromepepermans/equipe-entrepreneur) | l'entretien : statut, activité, documents, 3 fiches de poste, cerveau | avant, pour décider |
-| **`equipe-hermes`** (ici) | le paramétrage réel : dossiers, skills, verrou, rappels, kanban | après, pour installer |
+| 1 | **Inventaire** (toujours en premier) | ce qui existe déjà : profils, personnes, outils, ce qui marche mal |
+| 2 | **Entretien** | rôle, statut, activités, argent, temps, outils, papiers |
+| 3 | **Documents** | le cerveau, avec un fait par source |
+| 4 | **Diagnostic** | la liste justifiée des postes — 1, 2, 4, 6… |
+| 5 | **Récapitulatif validé** | `organigramme.md`, approuvé nommément |
+| 6 | **Installation** | dossiers, skills, verrou, rappels |
 
-## Le problème que ça résout
+L'inventaire se refait **à chaque entretien** : une équipe de trois mois a changé.
 
-Un dispositif d'agents se rate rarement au moment de l'idée. Il se rate à
-l'installation : les skills sont écrits à la main dans un coin, le dossier de
-validation n'existe pas, l'agent « envoie » un email qu'il n'aurait jamais dû
-envoyer, et deux semaines plus tard plus personne ne sait quel poste a produit
-quoi.
+## La règle, une seule
 
-Ici, l'installation est **un fichier de paramétrage** et **une commande**. Le
-résultat est vérifiable en six contrôles, et rejouable sur une autre machine
-sans copier quoi que ce soit à la main.
+> **Un poste existe si, et seulement si, il porte une tâche récurrente qui a un
+> livrable nommé.**
+
+Pas de plafond. « Suivre la stratégie » ou « être présent » n'est pas un
+livrable ; « facture PDF », « liste de prospects », « planning de production » le
+sont. Ce qui tue un dispositif, ce n'est pas le nombre de postes, c'est le poste
+que personne ne charge.
 
 ## Démarrage rapide
 
@@ -30,100 +44,103 @@ git clone https://github.com/jeromepepermans/equipe-hermes
 cp -r equipe-hermes ~/.hermes/skills/equipe-hermes
 
 cp equipe-hermes/templates/config.example.json ./equipe.json
-# remplir : entrepreneur, entreprise, trois postes, racine
+# remplir : utilisateur, entreprise, inventaire, postes (la liste a la taille du diagnostic)
 
-python3 equipe-hermes/scripts/installer.py --config equipe.json --dry-run
+python3 equipe-hermes/scripts/installer.py --config equipe.json --recapitulatif
+python3 equipe-hermes/scripts/installer.py --config equipe.json --valider "Camille Roux"
 python3 equipe-hermes/scripts/installer.py --config equipe.json
 ```
+
+Sans l'étape `--valider`, l'installation **refuse de tourner** (code de sortie 3,
+aucune écriture). C'est voulu : le récapitulatif est le seul moment où l'équipe se
+discute à froid.
 
 Puis, dans une session Hermes :
 
 ```
-charge equipe-hermes et termine l'installation — voici equipe.json
+charge equipe-hermes, commence par l'inventaire
 ```
 
-Sortie réelle (exemple fictif) :
+## Le récapitulatif, en clair
 
-```
-  Équipe Atelier Roux — installation réelle
-  racine      : /home/camille/dispositif
-  skills      : /home/camille/.hermes/skills/atelier
+```markdown
+# Organigramme — Atelier Roux
 
-  dossier  /home/camille/dispositif/a-valider
-  créé     /home/camille/dispositif/README.md
-  créé     /home/camille/dispositif/cerveau/entreprise.json
-  créé     /home/camille/.hermes/skills/atelier/atelier-ceo/SKILL.md
-  créé     /home/camille/.hermes/skills/atelier/atelier-bureau/SKILL.md
-  créé     /home/camille/.hermes/skills/atelier/atelier-voix/SKILL.md
-  créé     /home/camille/.hermes/skills/atelier/atelier-fidelisation/SKILL.md
-  créé     /home/camille/.hermes/scripts/atelier-a-valider.sh
-  créé     /home/camille/dispositif/crons-a-creer.sh
+## 1. Ce qui existait déjà (inventaire du 2026-10-29)
+| Ce qui existe déjà | Détail |
+|---|---|
+| Profil Hermes | `boutique` |
+| experte-comptable | comptes annuels |
+
+**Déjà couvert, donc non recréé :** site et boutique, comptabilité
+
+## 2. L'équipe proposée — 4 postes
+| # | Poste | Nom | Pourquoi il existe | Livrable principal | Niveau |
+|---|---|---|---|---|---|
+| 1 | Bureau | Jeanne | factures en retard, relances jamais faites | facture PDF | 🔴 |
+| 2 | Voix | Léa | fiches produit vides, pas de newsletter | fiche produit | 🟡 |
+| 3 | Acquisition | Marc | aucun prospect contacté depuis 8 mois | liste de prospects | 🟡 |
+| 4 | Production | Sam | ruptures de matière | liste de réassort | 🟡 |
+
+## 5. Écarté, et pourquoi
+- un poste Logistique — 3 expéditions par mois, pas récurrent
+- un poste « Direction » — ne produit aucun livrable
 ```
 
 ## Ce que l'installation crée
 
 ```
 <racine>/
-├── README.md              le circuit en cinq lignes
-├── config.json            le paramétrage appliqué (sans secret)
-├── crons-a-creer.sh       les rappels, prêts à coller
-├── a-valider/             l'agent dépose ici, puis s'arrête
-├── livres/                validé (déplacement par l'entrepreneur)
-├── archives/              refusé ou périmé
+├── organigramme.md        le récapitulatif validé (dérivé, régénéré)
+├── a-valider/ livres/ archives/
 ├── cerveau/               entreprise.json, offres.md, fiscal.md
-├── modeles/  logs/
-```
+├── README.md  config.json  crons-a-creer.sh
+└── modeles/  logs/
 
-```
 <HERMES_HOME>/skills/<prefixe>/
-├── <prefixe>-ceo/           dispatch, verrou, format de mission
-├── <prefixe>-bureau/        devis, factures, relances, déclarations
-├── <prefixe>-voix/          contenu, annonces, réseaux, SEO
-└── <prefixe>-<3e>/          acquisition | partenaires | fidélisation
+├── <prefixe>-direction/   dispatch, verrou, format de mission
+└── <prefixe>-<slug>/      un par poste (autant que le diagnostic en a trouvé)
 <HERMES_HOME>/scripts/<prefixe>-a-valider.sh
 ```
 
-## Les trois choses qui rendent le dispositif tenable
-
-1. **Trois postes, pas trente.** Bureau, Voix, et un troisième poste dont le
-   libellé dépend de l'activité (Acquisition, Partenaires ou Fidélisation). Les
-   spécialistes n'existent pas en permanence : un spécialiste = un skill chargé
-   au moment où le chef en a besoin.
-2. **Un verrou à trois niveaux.** 🟢 libre, 🟡 validation avant sortie,
-   🔴 signature. **Aucun agent ne déplace un fichier de `a-valider/` vers
-   `livres/`** : ce déplacement est la signature de l'entrepreneur, et la seule
-   preuve technique qu'une validation a eu lieu.
-3. **Des rappels muets.** Un cron `--no-agent` liste `a-valider/` deux fois par
-   jour et **ne dit rien quand le dossier est vide**. Coût zéro, aucune
-   invention possible, rien à ignorer.
+Huit modèles de postes (`bureau`, `voix`, `acquisition`, `partenaires`,
+`fidelisation`, `production`, `logistique`, `sav`) sont des points de départ, ou
+`libre` pour un poste décrit entièrement par l'utilisateur.
 
 ## Ce que l'installateur garantit
 
 | Garantie | Comment c'est tenu |
 |---|---|
+| Pas d'installation sans validation | `validation.valide` + nom + date, sinon sortie 3 et zéro écriture |
+| Pas de validation périmée | si le nombre de postes a changé, l'installation refuse |
+| `--force` ne contourne pas le verrou | seul `--valider` le lève |
+| Un poste sans livrable est refusé | contrôle à la lecture de la configuration |
+| Un poste sans justification est refusé | champ `pourquoi` obligatoire |
 | Idempotent | relancé sans changement, il n'écrit rien et l'affiche |
 | Non destructif | un fichier différent n'est pas écrasé sans `--force` |
 | `--force` sauvegarde | copie `.bak-<horodatage>` avant chaque écrasement |
-| `--dry-run` | plan complet, zéro écriture (vérifié par les tests) |
+| `--dry-run` | plan complet, zéro écriture |
 | Aucun secret | ne lit ni n'écrit de variable sensible, ne crée aucun `.env` |
-| Testé | 8 tests réels, sans mock, sur un `HOME` temporaire |
 
 ```bash
-python3 tests/test_installer.py     # 8 tests, aucun mock
+python3 tests/test_installer.py     # tests réels, aucun mock
 ```
 
 ## Le dépôt
 
 ```
 SKILL.md                        le skill (à charger dans Hermes)
-references/01-parametrage.md    les 7 blocs de questions → equipe.json
-references/02-installation.md   audit de la cible, pose, recette en 6 contrôles
-references/03-postes.md         gabarit des fiches, règles de dispatch
-references/04-verrou.md         les 3 niveaux, le circuit, les cas limites
-references/05-crons.md          rappels silencieux, --no-agent, --deliver
-references/06-autre-instance.md ce qui voyage et ce qui ne voyage pas
-references/07-exemple.md        exemple complet — entreprise fictive
-templates/                      gabarits (config, 2 skills, cerveau, README)
+references/01-inventaire.md     ce qui existe déjà — toujours en premier
+references/02-entretien.md      rôle, statut, activités, temps ; ce que ça décide
+references/03-documents.md      extraction des papiers, contrôles, minimisation
+references/04-diagnostic.md     comment N postes se déduisent des besoins
+references/05-organigramme.md   le récapitulatif et le verrou de validation
+references/06-installation.md   audit de la cible, pose, recette en 7 contrôles
+references/07-verrou.md         les 3 niveaux, le circuit, les cas limites
+references/08-crons.md          rappels silencieux, --no-agent, --deliver
+references/09-portabilite.md    ce qui voyage et ce qui ne voyage pas
+references/10-exemple.md        deux cas complets — 4 postes et 1 poste, fictifs
+templates/                      config, organigramme, questions, 2 gabarits de skills, cerveau
 scripts/installer.py            l'installateur
 scripts/a-valider.sh            le rappel
 tests/test_installer.py         les tests
@@ -131,10 +148,10 @@ tests/test_installer.py         les tests
 
 ## Ce que ce dépôt n'est pas
 
-- Pas un générateur d'agents à la chaîne : trois postes, et le quatrième exige
-  une décision écrite.
-- Pas un cabinet comptable ni juridique : il prépare, signale, et renvoie vers
-  un professionnel.
+- Pas un générateur d'agents à la chaîne : chaque poste doit porter un livrable
+  récurrent, et le récapitulatif doit être validé.
+- Pas un cabinet comptable ni juridique : il prépare, signale, renvoie vers un
+  professionnel.
 - Pas une équipe de développement : c'est `equipes-delegation` et les profils
   techniques qui s'en chargent.
 - Pas un endroit où mettre vos données : les exemples sont **fictifs**, et le
@@ -142,5 +159,4 @@ tests/test_installer.py         les tests
 
 ## Licence
 
-MIT — voir `LICENCE`. Les exemples d'entreprise sont inventés ; n'y mettez
-jamais de données réelles.
+MIT — voir `LICENCE`.
